@@ -6,3 +6,6 @@ models/
 
 # Ignore the checkpoints
 .ipynb_checkpoints/
+
+# Ignore the virtual environment
+venv/
