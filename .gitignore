@@ -9,3 +9,6 @@ models/
 
 # Ignore the virtual environment
 venv/
+
+# Ignore the pycache
+__pycache__/
