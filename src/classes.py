@@ -50,6 +50,12 @@ class Columns:
             raise ValueError('Columns not loaded')
         return [(x - column['Min']) / (column['Max'] - column['Min']) for x, column in zip(X[0], self.columns.to_dict('records'))]
 
+    def min_and_max(self):
+        if self.columns is None:
+            raise ValueError('Columns not loaded')
+        min_and_max = [(column['Min'], column['Max']) for column in self.columns.to_dict('records')]
+        return min_and_max
+
     def indexes(self):
         if self.columns is None:
             raise ValueError('Columns not loaded')
@@ -61,6 +67,15 @@ class Columns:
     def __repr__(self):
         return str(self.columns)
 
+def check_float(value):
+    for i in range(len(value)):
+        try:
+            value[i] = float(value[i])
+        except:
+            print(f'Error: {value[i]} is not a float')
+            return False
+    return True
+        
 if __name__ == '__main__':
     model_fallecidos = Model()
     model_fallecidos.load('models/stacking_classifier_fallecidos.pkl')
@@ -73,3 +88,4 @@ if __name__ == '__main__':
     print(columns,'\n')
     print(columns.scaler([[6, 2, 11, 11, 5, 6, 7, 10]]))
     print(columns.indexes())
+    print(columns.min_and_max())
