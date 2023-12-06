@@ -4,8 +4,16 @@ import sys
 import classes
 
 # Load models
-model_fallecidos = classes.Model()
-model_fallecidos.load('models/stacking_classifier_fallecidos.pkl')
+models = {
+    'stacking_classifier_fallecidos': classes.Model(),
+    'stacking_classifier_graves': classes.Model(),
+    'stacking_classifier_menos_graves': classes.Model(),
+    'stacking_classifier_leves': classes.Model(),
+    'stacking_classifier_ilesos': classes.Model(),
+    # ...
+}
+for model_name, model in models.items():
+    model.load(f'models/{model_name}.pkl')
 
 # Load columns
 min_max_columns = classes.Columns()
@@ -14,10 +22,15 @@ min_max_columns.load('data/min_max_columns.csv')
 # Initialize pygame
 pygame.init()
 
-# Create a window
+pygame.RESIZABLE = False
+
+# Create a window with a fixed size
 window_surface = pygame.display.set_mode((800, 600))
 
 manager = pygame_gui.UIManager((800, 600))
+
+# Create a dropdown menu for model selection
+model_selection = pygame_gui.elements.UIDropDownMenu(options_list=list(models.keys()), starting_option='stacking_classifier_fallecidos', relative_rect=pygame.Rect((250, 10), (300, 20)), manager=manager)
 
 # Create 8 text entry boxes and labels
 text_boxes = [pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((350, 50 + 60*i), (100, 50)), manager=manager) for i in range(8)]
@@ -44,8 +57,9 @@ while True:
                     inputs = [float(text_box.get_text()) for text_box in text_boxes]
                     inputs = min_max_columns.scaler([inputs])
                     print(inputs)
-                    print('Predicción:', model_fallecidos.predict([inputs])[0])
-                    
+                    selected_model = models[model_selection.selected_option]
+                    print('Predicción:', selected_model.predict([inputs])[0])
+                    print('Probabilidades:', selected_model.predict_proba([inputs])[0])
 
         manager.process_events(event)
 
